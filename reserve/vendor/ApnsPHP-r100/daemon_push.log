@@ -1,0 +1,8 @@
+[Jul 20 00:01:00]   notice: Starting daemon_push daemon, output in: '/vagrant/pushNotification/reserve/vendor/ApnsPHP-r100/daemon_push.log'
+[Jul 20 00:01:00]      err: Unable to change group of process to 500 [l:1535]
+[Jul 20 00:01:00]     crit: Unable to change identity [l:1348]
+[Jul 20 00:01:00]    emerg: Cannot continue after this [l:1350]
+[Jul 20 00:01:43]   notice: Starting daemon_push daemon, output in: '/vagrant/pushNotification/reserve/vendor/ApnsPHP-r100/daemon_push.log'
+[Jul 20 00:01:43]      err: Unable to change group of process to 0 [l:1535]
+[Jul 20 00:01:43]     crit: Unable to change identity [l:1348]
+[Jul 20 00:01:43]    emerg: Cannot continue after this [l:1350]
