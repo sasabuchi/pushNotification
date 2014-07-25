@@ -33,11 +33,11 @@ $push = new ApnsPHP_Push(
 	//ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
 	ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
 	//'/vagrant/asterisk/agi-bin/reserve/ApnsPHP-r100/certificates/server_certificates_development.pem'
-	'certificates/server_certificates_production.pem'
+	'/vagrant/asterisk/agi-bin/reserve/ApnsPHP-r100/certificates/server_certificates_production.pem'
 );
 
 // Set the Root Certificate Autority to verify the Apple remote peer
-$push->setRootCertificationAuthority('certificates/entrust_root_certification_authority.pem');
+$push->setRootCertificationAuthority('/vagrant/asterisk/agi-bin/reserve/ApnsPHP-r100/certificates/entrust_root_certification_authority.pem');
 
 // Connect to the Apple Push Notification Service
 $push->connect();
