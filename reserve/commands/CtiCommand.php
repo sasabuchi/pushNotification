@@ -26,6 +26,8 @@ date_default_timezone_set("Asia/Tokyo");
 
 class CtiCommand extends CConsoleCommand
 {
+
+    public $lastDialedTime;
     
     public function actionRun($shopId) {
             $app_name = "pushnotification_daemon_with_cti_" . $shopId;
@@ -37,7 +39,7 @@ class CtiCommand extends CConsoleCommand
                              "appRunAsUID"    => $shopId,
                              "appRunAsGID"    => $shopId
                              );
-            $dialedTime = date('Y/m/d H:i:s');
+            $this->lastDialedTime  = '';
             System_Daemon::setOptions($options);
             System_Daemon::start();
             while (!System_Daemon::isDying()) {
@@ -45,9 +47,9 @@ class CtiCommand extends CConsoleCommand
                     $ctiInfo = $this->setCtiInfo($shopId);
                     $ctiStatus = $this->getCtiInfoStatus($ctiInfo);
                     $telno = $this->getTelnoFromCtiInfo($ctiInfo);
-                    if ($ctiStatus == "OnCallList" || $dialedTime  != $this->getdialedTimeFromCtiInfo($ctiInfo)) {
-
-                        $dialedTime = $this->getdialedTimeFromCtiInfo($ctiInfo);
+                    $dialedTime = $this->getDialedTimeFromCtiInfo($ctiInfo);
+                    if ($ctiStatus == "OnCallList" && $this->lastDialedTime != $dialedTime) {
+                        $this->lastDialedTime  = $dialedTime;
                         $customerInfo = $this->searchCustoemrWithTelno($telno);
                         $message = $this->pushNotificationToReserve($customerInfo, $telno, $shopId);
        
@@ -71,17 +73,17 @@ class CtiCommand extends CConsoleCommand
 
     public function getCtiInfoStatus($ctiInfo)
     {
-        return $ctiInfo[0]['cnts'];
-    }
-
-    public function getdialedTimeFromCtiInfo($ctiInfo)
-    {
-        return $ctiInfo[23][''];
+        return $ctiInfo['0']['cnts'];
     }
 
     public function getTelnoFromCtiInfo($ctiInfo)
     {
-        return $ctiInfo[1][''];
+        return $ctiInfo['1'][''];
+    }
+
+    public function getDialedTimeFromCtiInfo($ctiInfo)
+    {
+        return $ctiInfo['23'][''];
     }
 
     /**
@@ -97,8 +99,9 @@ class CtiCommand extends CConsoleCommand
         */
         $ctiEntryPoint = "https://n.thincacti.com/CTI/T999-0003-001-01-6fe87e56fe557e69/comet.php?mode=check";
  
-        $currentmodif = $this->curl_get_contents($ctiEntryPoint, 1000);
-        $ctiInfo = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $currentmodif), true);
+        $currentCtiInfoText = $this->curl_get_contents($ctiEntryPoint, 1000);
+        $ctiInfo = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $currentCtiInfoText), true);
+        //$ctiInfo = json_decode($currentmodif, true);
         
         return $ctiInfo;
 
